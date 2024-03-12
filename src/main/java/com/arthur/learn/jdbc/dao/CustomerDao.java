@@ -1,12 +1,14 @@
 package com.arthur.learn.jdbc.dao;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-
+import java.io.File;
 import com.arthur.learn.jdbc.bean.Customer;
 import com.arthur.learn.jdbc.utils.JDBCUtils;
 
@@ -47,6 +49,28 @@ public class CustomerDao {
         }
 
         return customer;
+    }
+
+    public static void insertCustomerWithPicture(){
+        Connection connection = JDBCUtils.getConnection();
+        PreparedStatement ps = null;
+        String sql = "INSERT INTO customer (name, email, dob, photo) VALUES (?, ?, ?, ?)";
+        try {
+            ps = connection.prepareStatement(sql);
+            ps.setObject(1, "Arthur");
+            ps.setObject(2, "arthur@gmail.com");
+            ps.setObject(3, "1985-09-06");
+            FileInputStream inputStream = new FileInputStream(new File("C:\\Users\\ArthurCheng\\Documents\\IMG_0432.jpg"));
+            ps.setBlob(4, inputStream);
+            ps.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } finally{
+            JDBCUtils.closeResource(connection, ps);
+        }
+
     }
     
 }
