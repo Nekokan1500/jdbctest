@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
+import com.arthur.learn.jdbc.bean.User;
 import com.arthur.learn.jdbc.dao.BaseDao;
 import com.arthur.learn.jdbc.utils.JDBCUtils;
 
@@ -42,6 +43,30 @@ public class TransactionTest {
         finally{
             JDBCUtils.closeResource(connection, null);
         }
+    }
+
+    @Test
+    public void testTransactionSelect() throws SQLException{
+
+        Connection connection = JDBCUtils.getConnection();
+        System.out.println(connection.getTransactionIsolation());
+        connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+        connection.setAutoCommit(false);
+        String sql = "select name, password, address, phone, balance from t_user where id = ?";
+        User user = BaseDao.executeQuery(connection, sql, User.class, 1);
+        System.out.println(user);
+    }
+
+    @Test
+    public void testTransactionUpdate() throws SQLException, InterruptedException{
+        Connection connection = JDBCUtils.getConnection();
+        System.out.println(connection.getTransactionIsolation());
+        connection.setAutoCommit(false);
+        String sql = "Update t_user set balance = ? where id = ?";
+        int ret = BaseDao.executeUpdate(connection, sql,1200, 1);
+        
+        Thread.sleep(15000);
+        System.out.println("update finished and returned value of " + ret);
     }
 
 }

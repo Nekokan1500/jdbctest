@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "GFG",
+            "request": "launch",
+            "mainClass": "com.arthur.learn.jdbc.test.GFG",
+            "projectName": "jdbc"
+        },
+        {
+            "type": "java",
             "name": "Current File",
             "request": "launch",
             "mainClass": "${file}",

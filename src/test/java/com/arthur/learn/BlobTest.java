@@ -12,14 +12,14 @@ import java.sql.ResultSet;
 import org.junit.Test;
 
 import com.arthur.learn.jdbc.bean.Customer;
-import com.arthur.learn.jdbc.dao.CustomerDao;
+import com.arthur.learn.jdbc.dao.CustomerDaoDemo;
 import com.arthur.learn.jdbc.utils.JDBCUtils;
 
 public class BlobTest {
 
     @Test
     public void testInsertBlob(){
-        CustomerDao.insertCustomerWithPicture();
+        CustomerDaoDemo.insertCustomerWithPicture();
     }
 
     @Test

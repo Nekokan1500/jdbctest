@@ -1,5 +1,6 @@
 package com.arthur.learn.jdbc.bean;
 
+import java.sql.Blob;
 import java.sql.Date;
 
 public class Customer {
@@ -8,6 +9,15 @@ public class Customer {
     private String name;
     private String email;
     private Date dob;
+    private Blob photo;
+
+    public Blob getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(Blob photo) {
+        this.photo = photo;
+    }
 
     public Customer() {
     }

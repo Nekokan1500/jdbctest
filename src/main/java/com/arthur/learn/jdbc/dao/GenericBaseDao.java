@@ -2,6 +2,8 @@ package com.arthur.learn.jdbc.dao;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,28 +14,18 @@ import java.util.List;
 
 import com.arthur.learn.jdbc.utils.JDBCUtils;
 
-public abstract class BaseDao {
+public class GenericBaseDao<T> {
 
-    // No transaction support
-    public static int executeUpdate(String sql, Object ... parameters){
-        Connection connection = JDBCUtils.getConnection();
-        PreparedStatement ps = null;
-        try{
-            ps = connection.prepareStatement(sql);
-            for (int i = 0; i < parameters.length; i++) {
-                ps.setObject(i+1, parameters[i]);
-            }
-            //ps.execute();
-            return ps.executeUpdate();
-        } catch(SQLException e){
-            e.printStackTrace();
-        } finally{
-            JDBCUtils.closeResource(connection, ps);
-        }
-        return 0;
+    private Class<T> clazz = null;
+
+    {
+        Type genericSuperClass = this.getClass().getGenericSuperclass();
+        ParameterizedType paramType = (ParameterizedType) genericSuperClass;
+        Type[] typeArguments = paramType.getActualTypeArguments();
+        clazz = (Class<T>) typeArguments[0];
     }
 
-    public static int executeUpdate(Connection connection, String sql, Object ... parameters){
+    public int executeUpdate(Connection connection, String sql, Object ... parameters){
         PreparedStatement ps = null;
         try{
             ps = connection.prepareStatement(sql);
@@ -50,48 +42,7 @@ public abstract class BaseDao {
         return 0;
     }
 
-    public static <T> T executeQuery(String sql, Class<T> clazz, Object ... parameters){
-        Connection connection = JDBCUtils.getConnection();
-        PreparedStatement ps = null;
-        ResultSet rs = null;
-
-        try {
-            connection = JDBCUtils.getConnection();
-            ps = connection.prepareStatement(sql);
-            for (int i = 0; i < parameters.length; i++) {
-                ps.setObject(i+1, parameters[i]);
-            }
-            rs = ps.executeQuery();
-            ResultSetMetaData rsmd = rs.getMetaData();
-            int columnCount = rsmd.getColumnCount();
-            if (rs.next()){
-                T t = clazz.getDeclaredConstructor().newInstance();
-                for (int i = 0; i < columnCount; i++) {
-                    Object value = rs.getObject(i+1);
-                    String columnLabel = rsmd.getColumnLabel(i+1);
-                    Field field = clazz.getDeclaredField(columnLabel);
-                    field.setAccessible(true);
-                    field.set(t, value);
-                }
-                return t;
-            }
-        } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException
-                | SQLException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } finally{
-            JDBCUtils.closeResource(connection, ps, rs);
-        }
-
-        return null;
-    }
-
-    public static <T> List<T> executeQueryForList(Connection connection, String sql, Class<T> clazz, Object ... parameters){
+    public <T> List<T> executeQueryForList(Connection connection, String sql, Object ... parameters){
         PreparedStatement ps = null;
         ResultSet rs = null;
 
@@ -105,7 +56,7 @@ public abstract class BaseDao {
             int columnCount = rsmd.getColumnCount();
             List<T> beans = new ArrayList<T>();
             while (rs.next()){
-                T t = clazz.getDeclaredConstructor().newInstance();
+                T t = (T) clazz.getDeclaredConstructor().newInstance();
                 for (int i = 0; i < columnCount; i++) {
                     Object value = rs.getObject(i+1);
                     String columnLabel = rsmd.getColumnLabel(i+1);
@@ -132,7 +83,7 @@ public abstract class BaseDao {
         return null;
     }
 
-    public static <T> T executeQuery(Connection connection, String sql, Class<T> clazz, Object ... parameters){
+    public <T> T executeQuery(Connection connection, String sql, Object ... parameters){
         PreparedStatement ps = null;
         ResultSet rs = null;
 
@@ -145,7 +96,7 @@ public abstract class BaseDao {
             ResultSetMetaData rsmd = rs.getMetaData();
             int columnCount = rsmd.getColumnCount();
             if (rs.next()){
-                T t = clazz.getDeclaredConstructor().newInstance();
+                T t = (T) clazz.getDeclaredConstructor().newInstance();
                 for (int i = 0; i < columnCount; i++) {
                     Object value = rs.getObject(i+1);
                     String columnLabel = rsmd.getColumnLabel(i+1);
@@ -191,5 +142,4 @@ public abstract class BaseDao {
         }
         return null;
     }
-
 }

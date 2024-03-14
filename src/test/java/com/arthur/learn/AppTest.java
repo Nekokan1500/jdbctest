@@ -66,18 +66,6 @@ public class AppTest
         System.out.println("Order: " + order);
     }
 
-    @Test
-    public void testGenericQueryForList(){
-        String sql = "SELECT id, name, email FROM customer";
-        ArrayList<Customer> customers = (ArrayList<Customer>)BaseDao.executeQueryForList(sql, Customer.class);
-        /* 
-        for (Customer cust: customers){
-            System.out.println("Customer: " + cust);
-        }
-        */
-        customers.forEach(System.out::println);
-    }
-
     // Exercise 1
     @Test
     public void testInsertCustomer(){
