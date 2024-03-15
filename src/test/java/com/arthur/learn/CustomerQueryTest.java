@@ -92,7 +92,9 @@ public class CustomerQueryTest {
 
     @Test
     public void testGetAllCustomers(){
-        Connection connection = JDBCUtils.getConnection();
+        //Connection connection = JDBCUtils.getDBCPConnection();
+        //Connection connection = JDBCUtils.getC3p0Connection();
+        Connection connection = JDBCUtils.getDruidConnection();
         List<Customer> customers = customerDao.getAllCustomers(connection);
         customers.forEach(System.out::println);
         JDBCUtils.closeResource(connection, null);

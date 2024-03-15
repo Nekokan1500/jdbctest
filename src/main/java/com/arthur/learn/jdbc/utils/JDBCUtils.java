@@ -9,12 +9,41 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Properties;
 
+import javax.sql.DataSource;
+import org.apache.commons.dbcp2.BasicDataSourceFactory;
+
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 
 public class JDBCUtils {
 
     private static ComboPooledDataSource cpds = new ComboPooledDataSource("helloc3p0");
+    private static DataSource dbcp = null;
+    private static DataSource dataSource = null;
+
+    static {
+        Properties properties = new Properties();
+        try {
+            InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("dbcp.properties");
+            properties.load(is);
+            dbcp = BasicDataSourceFactory.createDataSource(properties);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    static{
+        Properties druidProperties = new Properties();
+        try {
+            InputStream is = ClassLoader.getSystemClassLoader().getResourceAsStream("druid.properties");
+            druidProperties.load(is);
+            dataSource = DruidDataSourceFactory.createDataSource(druidProperties);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static Connection getConnection(){
         Connection connection = null;
@@ -39,6 +68,28 @@ public class JDBCUtils {
         Connection connection = null;
         try {
             connection = cpds.getConnection();
+            return connection;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Connection getDBCPConnection(){
+        Connection connection = null;
+        try {
+            connection = dbcp.getConnection();
+            return connection;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Connection getDruidConnection(){
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
             return connection;
         } catch (SQLException e) {
             e.printStackTrace();
