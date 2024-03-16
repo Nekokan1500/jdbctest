@@ -5,14 +5,15 @@ import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Properties;
 
 import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSourceFactory;
+import org.apache.commons.dbutils.DbUtils;
 
-import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidDataSourceFactory;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -135,6 +136,12 @@ public class JDBCUtils {
         catch (SQLException e){
             e.printStackTrace();
         }
+    }
+
+    public static void closeResource1(Connection connection, Statement ps, ResultSet rs){
+        DbUtils.closeQuietly(connection);
+        DbUtils.closeQuietly(ps);
+        DbUtils.closeQuietly(rs);
     }
     
 }

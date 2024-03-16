@@ -5,7 +5,7 @@
         <property name="driverClass">com.mysql.cj.jdbc.Driver</property>
         <property name="jdbcUrl">jdbc:mysql://localhost:3306/jdbctest?rewriteBatchedStatements=true</property>
         <property name="user">root</property>
-        <property name="password">fast1234</property>
+        <property name="password">root</property>
         <!-- When number of connection is not enough, c3p0 will request the following from database server-->
         <property name="acquireIncrement">5</property>
         <!-- initial number of connections-->
